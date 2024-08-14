@@ -621,6 +621,14 @@ services:
                   -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20
                   -XX:MaxGCPauseMillis=10000 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent
                   -XX:MaxInlineLevel=15 -Djava.awt.headless=true
+    command:
+      - bash
+      - -c
+      - |
+        echo "Installing Connector"
+        confluent-hub install --no-prompt debezium/debezium-connector-mysql:latest
+        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:latest
+        confluent-hub install --no-prompt debezium/debezium-connector-postgresql:latest
 
 
   elasticsearch:
