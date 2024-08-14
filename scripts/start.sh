@@ -88,9 +88,9 @@ docker-compose exec kafka1 kafka-configs \
 # Bring up more containers
 docker-compose up --no-recreate -d schemaregistry connect control-center
 
-# echo
-# echo -e "Create topics in Kafka cluster:"
-# docker-compose exec tools bash -c "/tmp/helper/create-topics.sh" || exit 1
+echo
+echo -e "Create topics in Kafka cluster:"
+docker-compose exec tools bash -c "/tmp/helper/create-topics.sh" || exit 1
 
 # Verify Kafka Connect Worker has started
 MAX_WAIT=240
@@ -99,14 +99,14 @@ retry $MAX_WAIT host_check_up connect || exit 1
 
 #-------------------------------------------------------------------------------
 
-# echo -e "\nStart streaming from the Wikipedia SSE source connector:"
-# ${DIR}/connectors/submit_wikipedia_sse_config.sh || exit 1
+echo -e "\nStart streaming from the Wikipedia SSE source connector:"
+${DIR}/connectors/submit_wikipedia_sse_config.sh || exit 1
 
 # Verify connector is running
 MAX_WAIT=120
-# echo
-# echo "Waiting up to $MAX_WAIT seconds for connector to be in RUNNING state"
-# retry $MAX_WAIT check_connector_status_running "wikipedia-sse" || exit 1
+echo
+echo "Waiting up to $MAX_WAIT seconds for connector to be in RUNNING state"
+retry $MAX_WAIT check_connector_status_running "wikipedia-sse" || exit 1
 
 # Verify wikipedia.parsed topic is populated and schema is registered
 MAX_WAIT=120
@@ -146,9 +146,9 @@ if [[ "$VIZ" == "true" ]]; then
   build_viz || exit 1
 fi
 
-# echo -e "\nStart additional consumers to read from topics WIKIPEDIANOBOT, WIKIPEDIA_COUNT_GT_1"
-# ${DIR}/consumers/listen_WIKIPEDIANOBOT.sh
-# ${DIR}/consumers/listen_WIKIPEDIA_COUNT_GT_1.sh
+echo -e "\nStart additional consumers to read from topics WIKIPEDIANOBOT, WIKIPEDIA_COUNT_GT_1"
+${DIR}/consumers/listen_WIKIPEDIANOBOT.sh
+${DIR}/consumers/listen_WIKIPEDIA_COUNT_GT_1.sh
 
 echo
 echo
@@ -168,7 +168,7 @@ fi
 
 echo
 echo -e "\nAvailable LDAP users:"
-#docker-compose exec openldap ldapsearch -x -h localhost -b dc=confluentdemo,dc=io -D "cn=admin,dc=confluentdemo,dc=io" -w admin | grep uid:
+docker-compose exec openldap ldapsearch -x -h localhost -b dc=confluentdemo,dc=io -D "cn=admin,dc=confluentdemo,dc=io" -w admin | grep uid:
 curl -u mds:mds -X POST "https://localhost:8091/security/1.0/principals/User%3Amds/roles/UserAdmin" \
   -H "accept: application/json" -H "Content-Type: application/json" \
   -d "{\"clusters\":{\"kafka-cluster\":\"does_not_matter\"}}" \
